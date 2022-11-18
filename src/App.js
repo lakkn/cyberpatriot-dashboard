@@ -34,6 +34,12 @@ function Home() {
     const [newTeam, setNewTeam] = useState('');
     const [newTeamNick, setNewTeamNick] = useState('');
 
+    useEffect(() => {
+        if(localStorage.getItem('teams') !== null){
+            setTeamData(JSON.parse(localStorage.getItem('teams')));
+        }
+    }, [])
+
     const add_team = () => {
         var new_team = {};
         new_team[newTeam] = newTeamNick;
