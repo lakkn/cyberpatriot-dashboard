@@ -8,19 +8,39 @@
 }
 
 .d-left{
-    width: 25%;
+    width: 400px;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
+.d-left::-webkit-scrollbar {
+    background-color: #F8FAFC;
+    width: 16px;
+}
+
+.d-left::-webkit-scrollbar-track {
+    background-color: #F8FAFC;
+}
+
+.d-left::-webkit-scrollbar-thumb {
+    background-color: #babac0;
+    border-radius: 16px;
+    border: 4px solid #F8FAFC;
+}
+
+.d-left::-webkit-scrollbar-button {
+    display:none;
+}
 .d-card{
     width: 360px;
     height: 100px;
     background-color: white;
     border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     margin-left: 10px;
     font-family: 'Inconsolata', monospace;
     display: flex;
