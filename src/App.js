@@ -1,5 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts';
+import React, {useEffect, useState, useMemo, useCallback } from 'react';
+import { AnimatePresence, motion, useAnimationFrame } from "framer-motion";
+import { HiOutlinePause, HiOutlinePlay, HiOutlinePlus, HiOutlineMinus, HiOutlineChevronDoubleRight, HiOutlineChevronDoubleLeft } from "react-icons/hi2";
+import {
+    LineChart,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    Line,
+    ResponsiveContainer
+} from 'recharts';
+import Timeout from 'smart-timeout';
+import CountUp from 'react-countup';
 import './App.css';
 import './Dashboard.css';
 
@@ -61,7 +74,6 @@ function Home() {
             }
         }
         setTeamData(newTeams);
-        console.log(teamData);
     }
 
     const handle_change_number = (event) => {
@@ -69,7 +81,9 @@ function Home() {
     }
 
     const handle_change_nick = (event) => {
-        setNewTeamNick(event.target.value);
+        if(event.target.value.length() < 17){
+            setNewTeamNick(event.target.value);
+        }
     }
 
     const build = () => {
@@ -130,11 +144,153 @@ function Home() {
 
 function Dashboard() {
 
-    const [teams, setTeams] = useState([{'15-3316': 'HBI'}]);
-    const [teamData, setTeamData] = useState({});
+    const [teams, setTeams] = useState([]);
+    const [teamData, setTeamData] = useState({})
+//    const [teamData, setTeamData] = useState({
+//    '15-3316': {
+//        'images': [
+//            {'name': 'Windows10', 'runtime': 330, 'score': 77, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Ubuntu', 'runtime': 330, 'score': 75, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Server', 'runtime': 330, 'score': 85, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Debian', 'runtime': 330, 'score': 85, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false}
+//        ],
+//        'history': [
+//            {'Windows10': 0, 'Ubuntu': 0, 'Server': 0, 'Debian': 0, 'clean_time': '00:00'},
+//            {'Windows10': 5, 'Ubuntu': 10, 'Server': 0, 'Debian': 0, 'clean_time': '00:05'},
+//            {'Windows10': 9, 'Ubuntu': 20, 'Server': 0, 'Debian': 0, 'clean_time': '00:10'},
+//            {'Windows10': 13, 'Ubuntu': 37, 'Server': 27, 'Debian': 10, 'clean_time': '00:15'},
+//            {'Windows10': 14, 'Ubuntu': 43, 'Server': 30, 'Debian': 10, 'clean_time': '00:20'},
+//            {'Windows10': 14, 'Ubuntu': 45, 'Server': 33, 'Debian': 10, 'clean_time': '00:25'},
+//            {'Windows10': 19, 'Ubuntu': 45, 'Server': 40, 'Debian': 32, 'clean_time': '00:30'},
+//            {'Windows10': 21, 'Ubuntu': 45, 'Server': 42, 'Debian': 32, 'clean_time': '00:35'},
+//            {'Windows10': 23, 'Ubuntu': 50, 'Server': 44, 'Debian': 32, 'clean_time': '00:40'},
+//            {'Windows10': 23, 'Ubuntu': 50, 'Server': 47, 'Debian': 32, 'clean_time': '00:45'},
+//            {'Windows10': 19, 'Ubuntu': 69, 'Server': 50, 'Debian': 37, 'clean_time': '00:50'},
+//            {'Windows10': 29, 'Ubuntu': 69, 'Server': 53, 'Debian': 42, 'clean_time': '00:55'},
+//            {'Windows10': 34, 'Ubuntu': 69, 'Server': 59, 'Debian': 52, 'clean_time': '01:05'},
+//            {'Windows10': 39, 'Ubuntu': 69, 'Server': 63, 'Debian': 58, 'clean_time': '01:10'},
+//            {'Windows10': 42, 'Ubuntu': 75, 'Server': 66, 'Debian': 63, 'clean_time': '01:15'},
+//            {'Windows10': 46, 'Ubuntu': 75, 'Server': 71, 'Debian': 70, 'clean_time': '01:20'},
+//            {'Windows10': 54, 'Ubuntu': 75, 'Server': 76, 'Debian': 70, 'clean_time': '01:25'},
+//            {'Windows10': 60, 'Ubuntu': 75, 'Server': 80, 'Debian': 70, 'clean_time': '01:30'},
+//            {'Windows10': 77, 'Ubuntu': 75, 'Server': 85, 'Debian': 80, 'clean_time': '01:35'},
+//        ]
+//    },
+//    '15-3318': {
+//        'images': [
+//            {'name': 'Windows10', 'runtime': 330, 'score': 55, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Ubuntu', 'runtime': 330, 'score': 65, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Server', 'runtime': 330, 'score': 57, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false},
+//            {'name': 'Debian', 'runtime': 330, 'score': 52, 'issues': {'found': 20, 'remaining': 2}, 'penalties': 0, 'multiple': false, 'overtime': false}
+//        ],
+//        'history': [
+//            {'Windows10': 0, 'Ubuntu': 0, 'Server': 0, 'Debian': 0, 'clean_time': '00:00'},
+//            {'Windows10': 5, 'Ubuntu': 10, 'Server': 0, 'Debian': 0, 'clean_time': '00:05'},
+//            {'Windows10': 9, 'Ubuntu': 20, 'Server': 0, 'Debian': 10, 'clean_time': '00:10'},
+//            {'Windows10': 13, 'Ubuntu': 37, 'Server': 27, 'Debian': 15, 'clean_time': '00:15'},
+//            {'Windows10': 14, 'Ubuntu': 43, 'Server': 30, 'Debian': 30, 'clean_time': '00:20'},
+//            {'Windows10': 14, 'Ubuntu': 45, 'Server': 33, 'Debian': 30, 'clean_time': '00:25'},
+//            {'Windows10': 19, 'Ubuntu': 45, 'Server': 40, 'Debian': 38, 'clean_time': '00:30'},
+//            {'Windows10': 21, 'Ubuntu': 45, 'Server': 42, 'Debian': 38, 'clean_time': '00:35'},
+//            {'Windows10': 23, 'Ubuntu': 50, 'Server': 44, 'Debian': 38, 'clean_time': '00:40'},
+//            {'Windows10': 23, 'Ubuntu': 50, 'Server': 47, 'Debian': 43, 'clean_time': '00:45'},
+//            {'Windows10': 19, 'Ubuntu': 69, 'Server': 50, 'Debian': 43, 'clean_time': '00:50'},
+//            {'Windows10': 29, 'Ubuntu': 69, 'Server': 57, 'Debian': 43, 'clean_time': '00:55'},
+//            {'Windows10': 34, 'Ubuntu': 69, 'Server': 57, 'Debian': 50, 'clean_time': '01:05'},
+//            {'Windows10': 39, 'Ubuntu': 69, 'Server': 57, 'Debian': 48, 'clean_time': '01:10'},
+//            {'Windows10': 42, 'Ubuntu': 75, 'Server': 57, 'Debian': 48, 'clean_time': '01:15'},
+//            {'Windows10': 46, 'Ubuntu': 75, 'Server': 57, 'Debian': 50, 'clean_time': '01:20'},
+//            {'Windows10': 54, 'Ubuntu': 75, 'Server': 57, 'Debian': 50, 'clean_time': '01:25'},
+//            {'Windows10': 60, 'Ubuntu': 75, 'Server': 57, 'Debian': 50, 'clean_time': '01:30'},
+//            {'Windows10': 55, 'Ubuntu': 65, 'Server': 57, 'Debian': 52, 'clean_time': '01:35'},
+//        ]
+//    },
+//    });
     const [teamRank, setRankData] = useState([]);
     const [currentTeam, setCurrentTeam] = useState(0);
+    const previousTeam = useMemo(() => (currentTeam - 1 + teams.length) % teams.length, [teams, currentTeam]);
+    const [timerLength, setTimerLength] = useState(10000);
+
+    const [paused, setPaused] = useState(false);
+
+    const progressRef = document.getElementsByClassName('d-board-bar')[0];
+    const pauseIfPaused = useCallback(() => paused && Timeout.pause(timer), [paused]);
+
+    const resetProgress = () => {
+        if (progressRef) {
+            progressRef.style.width = "0%";
+            progressRef.style.opacity = "1";
+        }
+    };
+
+    const timer = 'timer';
+
+    const afterChange = useCallback(() => {
+        Timeout.restart(timer, true);
+        resetProgress();
+        pauseIfPaused();
+    }, [pauseIfPaused]);
+
+    const nextTeam = useCallback(() => {
+        setCurrentTeam((i) => (i + 1) % teams.length);
+        afterChange();
+    }, [afterChange, teams.length]);
+
+    const prevTeam = useCallback(() => {
+        setCurrentTeam((i) => (i - 1 + teams.length) % teams.length);
+        afterChange();
+    }, [afterChange, teams.length]);
+
+    const easeInOutCubic = (x: number) => {
+        return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    };
+
+    useAnimationFrame(() => {
+        if (!progressRef || Timeout.paused(timer)) return;
+        const style = progressRef.style;
+        const progress = (timerLength - Timeout.remaining(timer)) / timerLength;
+
+        const start = Math.min(0.1, 750 / timerLength);
+        const finish = Math.max(0.95, (timerLength - 500) / timerLength);
+
+        if (progress < start) {
+            resetProgress();
+        } else if (progress > finish) {
+            const localProgress = (progress - finish) / (1 - finish);
+            style.width = "100%";
+            style.opacity = `${1 - easeInOutCubic(localProgress)}`;
+        } else {
+            const localProgress = (progress - start) / (finish - start);
+            style.width = `${localProgress * 100}%`;
+            style.opacity = "1";
+        }
+    });
+
+    useEffect(() => {
+        setCurrentTeam((i) => (i % teams.length === 0 ? 0 : i));
+        Timeout.instantiate(timer, nextTeam, timerLength);
+        resetProgress();
+        pauseIfPaused();
+
+        return () => {
+            Timeout.clear(timer);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [teams.length, timerLength]);
+
+    useEffect(() => {
+        if (paused) {
+            Timeout.pause(timer);
+        } else {
+            Timeout.resume(timer);
+        }
+    }, [paused]);
+
     const colors = ['#2563EB','#9333EA','#F97316','#10b981'];
+
+    const setTeam = (id) => {
+        setCurrentTeam(id);
+    };
 
     useEffect(() => {
         const getData = async () => {
@@ -170,13 +326,11 @@ function Dashboard() {
                     new_results[teamnum]['history'][index]['clean_time'] = piece['time'].substring(11,16);
                 })
             ))
-            console.log(new_results);
             setRankData(results2['teams']);
             setTeamData(results);
         };
 
         getData();
-
         const interval = setInterval(getData, 60000);
 
         return () => clearInterval(interval);
@@ -186,7 +340,7 @@ function Dashboard() {
         <div className='d-all'>
             <div className='d-left'>
                 { teamRank.map((team, index) => (
-                    <div onClick={() => setCurrentTeam(index)} className='d-card'>
+                    <div onClick={() => setTeam(index)} className='d-card'>
                         <div className='d-card-head'>
                             <div className='d-card-num'>{team['TeamNumber']}</div>
                             <div className='d-card-name'>{teams[index][team['TeamNumber']]}</div>
@@ -216,33 +370,84 @@ function Dashboard() {
                         <div className='d-board-standing'>
                             <div className='d-board-rank'>
                                 <div className='d-board-standing-cat'><strong>National</strong></div>
-                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong>{teamRank[currentTeam]['DivisionRank']}</strong></div><div style={{'fontSize': '20px'}}>/{teamRank[currentTeam]['TotalTeamsDivision']}</div></div>
+                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong><CountUp end={teamRank[currentTeam]['DivisionRank']} duration={3} useEasing={true} /></strong></div><div style={{'fontSize': '20px'}}>/<CountUp end={teamRank[currentTeam]['TotalTeamsDivision']} duration={2} useEasing={true} /></div></div>
                                 <div className='d-board-standing-perc'>{teamRank[currentTeam]['DivisionPercentile']}th Percentile</div>
                             </div>
                             <div className='d-board-tier'>
-                                <div className='d-board-standing-cat'><strong>Tier</strong></div>
-                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong>{teamRank[currentTeam]['TierRank']}</strong></div><div style={{'fontSize': '20px'}}>/{teamRank[currentTeam]['TotalTeamsTier']}</div></div>
+                                <div className='d-board-standing-cat'><strong>{teamRank[currentTeam]['Tier']}</strong></div>
+                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong><CountUp end={teamRank[currentTeam]['TierRank']} duration={3} useEasing={true} /></strong></div><div style={{'fontSize': '20px'}}>/<CountUp end={teamRank[currentTeam]['TotalTeamsTier']} duration={2} useEasing={true} /></div></div>
                                 <div className='d-board-standing-perc'>{teamRank[currentTeam]['TierPercentile']}th Percentile</div>
                             </div>
                             <div className='d-board-state'>
-                                <div className='d-board-standing-cat'><strong>State</strong></div>
-                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong>{teamRank[currentTeam]['StateRank']}</strong></div><div style={{'fontSize': '20px'}}>/{teamRank[currentTeam]['TotalTeamsState']}</div></div>
+                                <div className='d-board-standing-cat'><strong>State</strong> <div className='d-board-state-symbol'>{teamRank[currentTeam]['State']}</div></div>
+                                <div className='d-board-standing-place'><div style={{'fontSize': '30px'}}><strong><CountUp end={teamRank[currentTeam]['StateRank']} duration={3} useEasing={true} /></strong></div><div style={{'fontSize': '20px'}}>/<CountUp end={teamRank[currentTeam]['TotalTeamsState']} duration={2} useEasing={true} /></div></div>
                                 <div className='d-board-standing-perc'>{teamRank[currentTeam]['StatePercentile']}th Percentile</div>
                             </div>
 
                         </div>
                     </div>
                     <div className='d-board-body'>
-                        <LineChart width={800} height={450} data={teamData[teamRank[currentTeam]['TeamNumber']]['history']}
-                        margin={{ top: 40, right: 20, bottom: 5, left: 0 }}>
-                            { teamData[teamRank[currentTeam]['TeamNumber']]['images'].map((image, index) => (
-                                <Line type='monotone' dataKey={image['name']} dot={false} stroke={colors[index]} />
-                            ))}
-                            <XAxis dataKey={'clean_time'}/>
-                            <YAxis/>
-                            <Tooltip/>
-                            <Legend/>
-                        </LineChart>
+                        <div className='d-board-main'>
+                            <div className='d-board-graph'>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={teamData[teamRank[currentTeam]['TeamNumber']]['history']}
+                                margin={{ top: 20, right: 20, bottom: 10, left: 0 }}>
+                                    { teamData[teamRank[currentTeam]['TeamNumber']]['images'].map((image, index) => (
+                                        <Line type='monotone' dataKey={image['name']} dot={false} stroke={colors[index]} strokeWidth={2} activeDot={{ r: 6 }} />
+                                    ))}
+                                    <XAxis dataKey={'clean_time'}/>
+                                    <CartesianGrid strokeDasharray="6 6" />
+                                    <YAxis/>
+                                    <Tooltip/>
+                                    <Legend/>
+                                </LineChart>
+                            </ResponsiveContainer>
+                            </div>
+                            <div className="d-board-images">
+                                { teamData[teamRank[currentTeam]['TeamNumber']]['images'].map((image, index) => (
+                                    <div className='d-board-image-info'>
+                                        <div className='d-board-image-name' style={{'color': colors[index]}}>{image['name']}</div>
+                                        <div className='d-board-image-details'>
+                                            <div className='d-board-image-score'>{image['score']}</div>
+                                            <div className='d-board-image-vulns'>
+                                                <div>{image['issues']['found']}/{image['issues']['found']+image['issues']['remaining']} Vulns Found</div>
+                                                <div>{image['penalties']} Penalties Given</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className='d-board-playback'>
+                            <div className='d-board-pb-settings'>
+                                <div className='d-board-pb-left'>
+                                    <div className='d-board-pb-playpause-holder'>
+                                        { paused
+                                          ? <HiOutlinePlay onClick={() => setPaused(false)} className='d-board-pb-playpause' />
+                                          : <HiOutlinePause onClick={() => setPaused(true)} className='d-board-pb-playpause' />
+                                        }
+                                    </div>
+                                    <div className='d-board-pb-timer'>
+                                        <HiOutlineMinus onClick={() => setTimerLength((i) => Math.max(i - 1000, 1000))} className='d-board-pb-plusminus' />
+                                        {timerLength/1000}
+                                        <HiOutlinePlus onClick={() => setTimerLength((i) => (i+1000))} className='d-board-pb-plusminus' />
+                                    </div>
+                                </div>
+                                <div className='d-board-pb-right'>
+                                    <div className='d-board-pb-prev' onClick={prevTeam}><HiOutlineChevronDoubleLeft/></div>
+                                    <div className='d-board-pb-next' onClick={nextTeam}><HiOutlineChevronDoubleRight/></div>
+                                </div>
+                            </div>
+                            <div className='d-board-bar'>
+                                <motion.div
+                                    className='d-board-bar2'
+                                    style={{
+                                        'backgroundImage': 'linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%)',
+                                        'backgroundColor': '#4158D0',
+                                    }}
+                                ></motion.div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 }

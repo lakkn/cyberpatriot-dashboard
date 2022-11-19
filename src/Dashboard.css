@@ -1,18 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 .d-all{
     display: flex;
     background: #F8FAFC;
-    width: 100%;
-    height: 100vh;
+    width: 98%;
+    height: 96vh;
+    padding-left: 1%;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    padding-right: 1%;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 .d-left{
-    width: 400px;
-    height: 100vh;
+    width: 320px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    gap: 10px;
 }
 
 .d-left::-webkit-scrollbar {
@@ -34,14 +44,11 @@
     display:none;
 }
 .d-card{
-    width: 360px;
+    width: 300px;
     height: 100px;
     background-color: white;
     border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 10px;
     font-family: 'Inconsolata', monospace;
     display: flex;
     flex-direction: column;
@@ -109,16 +116,16 @@
 }
 
 .d-right{
-    width: 75%;
-    height: 100vh;
+    min-width: calc(100vw - 2% - 320px);
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .d-board{
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
     background-color: white;
     border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -130,7 +137,7 @@
     height: 30%;
     display: flex;
     font-family: 'Inconsolata', monospace;
-    border-bottom: 1px solid #9CA3AF;
+    border-bottom: 1px solid #DDDDDD;
 }
 
 .d-board-team{
@@ -138,7 +145,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    border-right: 1px solid #9CA3AF;
+    border-right: 1px solid #DDDDDD;
 }
 
 .d-board-number{
@@ -153,7 +160,7 @@
 
 .d-board-name{
     margin-left: 50px;
-    font-size: 70px;
+    font-size: 5vw;
 }
 
 .d-board-standing{
@@ -181,8 +188,23 @@
     justify-content: center;
 }
 
+.d-board-state-symbol{
+    padding: 3px;
+    padding-left: 6px;
+    padding-right: 7px;
+    border-radius: 5px;
+    background-color: #1F2937;
+    color: white;
+    margin-left: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9vw
+}
+
 .d-board-standing-cat{
-    font-size: 20px;
+    font-size: 1.5vw;
+    display: flex
 }
 
 .d-board-standing-place{
@@ -190,9 +212,174 @@
 }
 
 .d-board-standing-perc{
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .d-board-body{
     height: 70%;
+}
+
+.d-board-main{
+    height: 94%;
+    display: flex;
+}
+
+.d-board-graph{
+    width: 70%;
+    height: 100%;
+}
+
+.d-board-images{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    gap: 10px;
+}
+
+.d-board-image-name{
+    font-size: 1.5vw;
+}
+
+.d-board-image-info{
+    width: 70%;
+}
+
+.d-board-image-details{
+    width: calc(100% - 30px);
+    border-radius: 10px;
+    border: 1px solid #DDDDDD;
+    font-family: 'Inconsolata', monospace;
+    display: flex;
+    padding: 15px;
+}
+
+.d-board-image-score{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vw;
+    border-right: 1px solid #DDDDDD;
+    padding-right: 15px;
+}
+
+.d-board-image-vulns{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-left: 15px;
+}
+
+.d-board-playback{
+    height: 6%;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.d-board-pb-settings{
+    height: 75%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    color: #BBBBBB;
+    border-bottom: 1px solid #DDDDDD;
+    border-top: 1px solid #DDDDDD;
+}
+
+.d-board-pb-left{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.d-board-pb-right{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.d-board-pb-prev{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid #DDDDDD;
+    height: 60%;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.d-board-pb-prev:hover{
+    color: #777777;
+}
+
+.d-board-pb-next{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 60%;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.d-board-pb-next:hover{
+    color: #777777;
+}
+
+.d-board-pb-timer{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid #DDDDDD;
+    height: 60%;
+    gap: 5px;
+    font-size: 18px;
+    font-family: 'Inconsolata', monospace;
+}
+
+.d-board-pb-plusminus{
+    transition: 200ms;
+    cursor: pointer;
+}
+
+.d-board-pb-plusminus:hover{
+    color: #777777;
+}
+
+.d-board-pb-playpause-holder{
+    padding-right: 10px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #DDDDDD;
+    height: 60%;
+}
+
+.d-board-pb-playpause{
+    display: flex;
+    align-items: center;
+    transition: 200ms;
+    cursor: pointer;
+}
+
+.d-board-pb-playpause:hover{
+    color: #777777;
+}
+
+.d-board-bar{
+    height: 20%;
+    width: 100%;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.d-board-bar2{
+    height: 100%;
+    width: 100%;
+    border-radius: 0px 0px 10px 10px;
 }
