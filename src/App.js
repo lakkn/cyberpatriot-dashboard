@@ -81,7 +81,7 @@ function Home() {
     }
 
     const handle_change_nick = (event) => {
-        if(event.target.value.length() < 17){
+        if(event.target.value.length < 17){
             setNewTeamNick(event.target.value);
         }
     }
@@ -205,6 +205,7 @@ function Dashboard() {
 //            {'Windows10': 55, 'Ubuntu': 65, 'Server': 57, 'Debian': 52, 'clean_time': '01:35'},
 //        ]
 //    },
+//    '15-3319': null
 //    });
     const [teamRank, setRankData] = useState([]);
     const [currentTeam, setCurrentTeam] = useState(0);
