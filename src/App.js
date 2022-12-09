@@ -26,7 +26,7 @@ import {
     useLocation,
 } from "react-router-dom";
 
-const api_base_path = 'https://cyberpatriot-scraper.lakkn.workers.dev/'
+const api_base_path = 'https://cbp-data.ngo.sh/'
 
 function App() {
     return (
@@ -303,7 +303,7 @@ function Dashboard() {
             setTeams(teamList);
             if(teamList === 0) return;
 
-            const res = await fetch('https://cyberpatriot-scoreboard.xcvr48.workers.dev/'+"info?teams="+teamNums.join(","));
+            const res = await fetch('https://cbp-data.ngo.sh/'+"info?teams="+teamNums.join(","));
             const res2 = await fetch('https://0tc8svpio2.execute-api.us-east-1.amazonaws.com/default/cyberpatriot-read',{
                 method: 'POST',
                 headers: {
